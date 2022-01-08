@@ -34,6 +34,10 @@
 #  include "video/gl/gl_video_system.hpp"
 #endif
 
+#ifdef HAVE_VK
+#  include "video/vk/vulkan_video_system.hpp"
+#endif
+
 std::unique_ptr<VideoSystem>
 VideoSystem::create(VideoSystem::Enum video_system)
 {
@@ -89,6 +93,15 @@ VideoSystem::create(VideoSystem::Enum video_system)
       return std::make_unique<SDLVideoSystem>();
 #endif
 
+#ifdef HAVE_VK
+    case VIDEO_VK:
+      return std::make_unique<VulkanVideoSystem>();
+#else
+    case VIDEO_VK:
+      log_warning << "Vulkan requested, but missing using SDL fallback" << std::endl;
+      return std::make_unique<SDLVideoSystem>();
+#endif
+
     case VIDEO_SDL:
       log_info << "new SDL renderer\n";
       return std::make_unique<SDLVideoSystem>();
@@ -118,6 +131,12 @@ VideoSystem::get_video_system(const std::string &video)
   else if (video == "opengl20")
   {
     return VIDEO_OPENGL20;
+  }
+#endif
+#ifdef HAVE_VK
+  else if (video == "vk" || video == "vulkan")
+  {
+    return VIDEO_VK;
   }
 #endif
   else if (video == "sdl")
@@ -151,6 +170,8 @@ VideoSystem::get_video_string(VideoSystem::Enum video)
       return "opengl20";
     case VIDEO_SDL:
       return "sdl";
+    case VIDEO_VK:
+      return "vk";
     case VIDEO_NULL:
       return "null";
     default:

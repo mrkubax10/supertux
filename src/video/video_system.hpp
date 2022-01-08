@@ -41,6 +41,7 @@ public:
     VIDEO_OPENGL33CORE,
     VIDEO_OPENGL20,
     VIDEO_SDL,
+    VIDEO_VK,
     VIDEO_NULL
   };
 
