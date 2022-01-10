@@ -74,20 +74,24 @@ VulkanContext::~VulkanContext()
   vkDeviceWaitIdle(m_device);
   vkDestroyDevice(m_device, nullptr);
   vkDestroySurfaceKHR(m_vk_instance, m_main_surface, nullptr);
-  vkDestroySwapchainKHR(m_device, m_swapchain, nullptr);
-  for (unsigned int i = 0; i < m_swapchain_framebuffers.size(); i++)
-  {
-    vkDestroyFramebuffer(m_device, m_swapchain_framebuffers[i], nullptr);
-  }
-  for (unsigned int i = 0; i < m_swapchain_image_views.size(); i++)
-  {
-    vkDestroyImageView(m_device, m_swapchain_image_views[i], nullptr);
-  }
-  vkDestroyPipeline(m_device, m_gfx_pipeline, nullptr);
-  vkDestroyPipelineLayout(m_device, m_pipeline_layout, nullptr);
-  vkDestroyRenderPass(m_device, m_render_pass, nullptr);
+  destroy_swapchain();
   vkDestroyCommandPool(m_device, m_command_pool, nullptr);
   vkDestroyInstance(m_vk_instance, nullptr);
+}
+
+void
+VulkanContext::on_window_resize()
+{
+  vkDeviceWaitIdle(m_device);
+
+  destroy_swapchain();
+
+  create_swapchain();
+  create_image_views();
+  create_render_pass();
+  create_pipeline();
+  create_framebuffer();
+  create_command_buffers();
 }
 
 void
@@ -489,6 +493,24 @@ VulkanContext::create_command_buffers()
     if (result3 != VK_SUCCESS)
       throw std::runtime_error("failed to end command buffer");
   }
+}
+
+void
+VulkanContext::destroy_swapchain()
+{
+  for (unsigned int i = 0; i < m_swapchain_framebuffers.size(); i++)
+  {
+    vkDestroyFramebuffer(m_device, m_swapchain_framebuffers[i], nullptr);
+  }
+  vkFreeCommandBuffers(m_device, m_command_pool, static_cast<uint32_t>(m_command_buffers.size()), m_command_buffers.data());
+  vkDestroyPipeline(m_device, m_gfx_pipeline, nullptr);
+  vkDestroyPipelineLayout(m_device, m_pipeline_layout, nullptr);
+  vkDestroyRenderPass(m_device, m_render_pass, nullptr);
+  for (unsigned int i = 0; i < m_swapchain_image_views.size(); i++)
+  {
+    vkDestroyImageView(m_device, m_swapchain_image_views[i], nullptr);
+  }
+  vkDestroySwapchainKHR(m_device, m_swapchain, nullptr);
 }
 
 bool

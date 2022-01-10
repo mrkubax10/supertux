@@ -19,7 +19,7 @@
 #include "video/vk/vulkan_video_system.hpp"
 
 VulkanPainter::VulkanPainter(VulkanVideoSystem& video_system) :
-  m_video_system(video_system),
+  m_video_system(video_system)
 {
   
 }

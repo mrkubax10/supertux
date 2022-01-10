@@ -20,6 +20,7 @@
 #include <memory>
 
 #include "video/sdlbase_video_system.hpp"
+#include "video/viewport.hpp"
 #include "video/vk/vulkan_context.hpp"
 #include "video/vk/vulkan_screen_renderer.hpp"
 
@@ -34,7 +35,7 @@ public:
   virtual Renderer& get_renderer() const override { return *m_screen_renderer; }
   virtual Renderer& get_lightmap() const override;
   virtual TexturePtr new_texture(const SDL_Surface& image, const Sampler& sampler = Sampler()) override;
-  virtual const Viewport& get_viewport() const override;
+  virtual const Viewport& get_viewport() const override { return m_viewport; }
   virtual void apply_config() override;
   virtual void flip() override;
   virtual void set_vsync(int mode) override;
@@ -51,6 +52,7 @@ private:
 private:
   std::unique_ptr<VulkanContext> m_context;
   std::unique_ptr<VulkanScreenRenderer> m_screen_renderer;
+  Viewport m_viewport;
 
 private:
   VulkanVideoSystem(const VulkanVideoSystem&) = delete;

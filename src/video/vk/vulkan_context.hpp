@@ -44,12 +44,14 @@ public:
   VulkanContext(VulkanVideoSystem& video_system);
   ~VulkanContext();
 
+  void on_window_resize();
+
   VkDevice get_device() const { return m_device; }
   VkSwapchainKHR get_swapchain() const { return m_swapchain; }
-  std::vector<VkCommandBuffer>& get_command_buffers() const { return m_command_buffers; }
+  std::vector<VkCommandBuffer>& get_command_buffers() { return m_command_buffers; }
   VkQueue get_graphics_queue() const { return m_graphics_queue; }
   VkQueue get_presentation_queue() const { return m_presentation_queue; }
-  std::vector<VkImage>& get_swapchain_images() const { return m_swapchain_images; }
+  std::vector<VkImage>& get_swapchain_images() { return m_swapchain_images; }
 
 private:
   void init_application();
@@ -63,6 +65,7 @@ private:
   void create_framebuffer();
   void create_command_pool();
   void create_command_buffers();
+  void destroy_swapchain();
 
   bool is_device_suitable(VkPhysicalDevice device);
   QueueFamily find_queue_families(VkPhysicalDevice device);

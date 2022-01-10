@@ -258,6 +258,7 @@ option(ENABLE_OPENGL "Enable OpenGL support" ON)
 option(ENABLE_OPENGLES2 "Enable OpenGLES2 support" OFF)
 option(GLBINDING_ENABLED "Use glbinding instead of GLEW" OFF)
 option(GLBINDING_DEBUG_OUTPUT "Enable glbinding debug output for each called OpenGL function" OFF)
+option(ENABLE_VULKAN "Enable Vulkan support" OFF)
 
 if(ENABLE_OPENGL)
   if(EMSCRIPTEN AND ENABLE_OPENGLES2)
@@ -294,6 +295,10 @@ if(ENABLE_OPENGL)
     endif()
   endif()
 endif(ENABLE_OPENGL)
+
+if(ENABLE_VULKAN)
+  set(HAVE_VK TRUE)
+endif(ENABLE_VULKAN)
 
 if(NOT EMSCRIPTEN)
   if(VCPKG_BUILD)
@@ -682,6 +687,11 @@ if(HAVE_OPENGL)
   set(SUPERTUX_SOURCES_CXX ${SUPERTUX_SOURCES_CXX} ${SUPERTUX_OPENGL_SOURCES})
 endif(HAVE_OPENGL)
 
+if(HAVE_VK)
+  file(GLOB SUPERTUX_VK_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/video/vk/*.cpp)
+  set(SUPERTUX_SOURCES_CXX ${SUPERTUX_SOURCES_CXX} ${SUPERTUX_VK_SOURCES})
+endif(HAVE_VK)
+
 ## Sort source lists to have deterministic linking order
 list(SORT SUPERTUX_SOURCES_C)
 list(SORT SUPERTUX_SOURCES_CXX)
@@ -1017,6 +1027,11 @@ if(HAVE_OPENGL)
     endif()
   endif()
 endif(HAVE_OPENGL)
+
+if(HAVE_VK)
+  target_link_libraries(supertux2_lib PUBLIC ${VULKAN_SDK}/lib/libvulkan.so)
+  target_include_directories(supertux2_lib PUBLIC ${VULKAN_SDK}/include)
+endif(HAVE_VK)
 
 if(NOT EMSCRIPTEN)
   if(HAVE_LIBCURL)

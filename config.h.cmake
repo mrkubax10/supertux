@@ -27,6 +27,8 @@
 
 #cmakedefine HAVE_OPENGL
 
+#cmakedefine HAVE_VK
+
 #cmakedefine HAVE_LIBCURL
 
 #define BUILD_DATA_DIR "${BUILD_DATA_DIR}"

@@ -33,7 +33,7 @@ VulkanScreenRenderer::VulkanScreenRenderer(VulkanVideoSystem& video_system) :
   m_image_available.resize(MAX_FRAMES);
   m_render_finished.resize(MAX_FRAMES);
   m_fences.resize(MAX_FRAMES);
-  m_image_fences.resize(m_video_system.get_context().get_swapchain_images.size(), VK_NULL_HANDLE);
+  m_image_fences.resize(m_video_system.get_context().get_swapchain_images().size(), VK_NULL_HANDLE);
   VkSemaphoreCreateInfo semaphore_create_info{};
   semaphore_create_info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
@@ -54,9 +54,9 @@ VulkanScreenRenderer::~VulkanScreenRenderer()
 {
   for (unsigned int i = 0; i < MAX_FRAMES; i++)
   {
-    vkDestroySemaphore(m_image_available[i]);
-    vkDestroySemaphore(m_render_finished[i]);
-    vkDestroyFence(m_fences[i]);
+    vkDestroySemaphore(m_video_system.get_context().get_device(), m_image_available[i], nullptr);
+    vkDestroySemaphore(m_video_system.get_context().get_device(), m_render_finished[i], nullptr);
+    vkDestroyFence(m_video_system.get_context().get_device(), m_fences[i], nullptr);
   }
 }
 
@@ -75,6 +75,10 @@ VulkanScreenRenderer::end_draw()
   unsigned int image_index;
   vkAcquireNextImageKHR(m_video_system.get_context().get_device(), m_video_system.get_context().get_swapchain(), UINT64_MAX, m_image_available[m_frame], VK_NULL_HANDLE, &image_index);
 
+  if (m_image_fences[image_index] != VK_NULL_HANDLE)
+    vkWaitForFences(m_video_system.get_context().get_device(), &m_image_fences[image_index], VK_TRUE, UINT64_MAX);
+  m_image_fences[image_index] = m_fences[m_frame];
+  
   VkSubmitInfo submit_info{};
   VkPipelineStageFlags flags[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
   submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -85,6 +89,8 @@ VulkanScreenRenderer::end_draw()
   submit_info.pCommandBuffers = &m_video_system.get_context().get_command_buffers().at(image_index);
   submit_info.signalSemaphoreCount = 1;
   submit_info.pSignalSemaphores = &m_render_finished[m_frame];
+
+  vkResetFences(m_video_system.get_context().get_device(), 1, &m_fences[m_frame]);
 
   vkQueueSubmit(m_video_system.get_context().get_graphics_queue(), 1, &submit_info, m_fences[m_frame]);
 

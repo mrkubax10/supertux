@@ -16,15 +16,16 @@
 
 #include "video/vk/vulkan_video_system.hpp"
 
+#include "supertux/gameconfig.hpp"
 #include "video/sdl_surface_ptr.hpp"
 
 VulkanVideoSystem::VulkanVideoSystem() :
   m_context(),
-  m_screen_renderer()
+  m_screen_renderer(),
+  m_viewport()
 {
   create_vk_window();
   create_vk_context();
-  m_screen_renderer.reset(new VulkanScreenRenderer(*this));
 }
 
 VulkanVideoSystem::~VulkanVideoSystem()
@@ -56,16 +57,17 @@ VulkanVideoSystem::new_texture(const SDL_Surface& image, const Sampler& sampler)
 
 }
 
-const Viewport&
-VulkanVideoSystem::get_viewport() const
-{
-
-}
-
 void
 VulkanVideoSystem::apply_config()
 {
+  apply_video_mode();
+  Size target_size = g_config->use_fullscreen ?
+    ((g_config->fullscreen_size == Size(0, 0)) ? m_desktop_size : g_config->fullscreen_size) :
+    g_config->window_size;
+  m_viewport = Viewport::from_size(target_size, m_desktop_size);
+  m_screen_renderer.reset(new VulkanScreenRenderer(*this));
 
+  m_context->on_window_resize();
 }
 
 void
