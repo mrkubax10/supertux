@@ -39,10 +39,20 @@ public:
   virtual void get_pixel(const GetPixelRequest& request) const override;
   virtual void set_clip_rect(const Rect& rect) override;
   virtual void clear_clip_rect() override;
-  
+  virtual void draw_texture(const TextureRequest& request) override;
 
 private:
   VulkanVideoSystem& m_video_system;
+  unsigned int m_vertex_buffer_previous_size;
+  VkBuffer m_vertex_buffer;
+  VkBuffer m_uv_buffer;
+  VkDeviceMemory m_vertex_buffer_memory;
+  VkDeviceMemory m_uv_buffer_memory;
+
+private:
+  void create_buffers();
+  void draw_arrays();
+  uint32_t get_memory_type_index(uint32_t type, VkMemoryPropertyFlags flags);
 
 private:
   VulkanPainter(const VulkanPainter&) = delete;

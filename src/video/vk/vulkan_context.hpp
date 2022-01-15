@@ -52,6 +52,7 @@ public:
   VkQueue get_graphics_queue() const { return m_graphics_queue; }
   VkQueue get_presentation_queue() const { return m_presentation_queue; }
   std::vector<VkImage>& get_swapchain_images() { return m_swapchain_images; }
+  VkPhysicalDevice get_physical_device() { return m_physical_device; }
 
 private:
   void init_application();
@@ -94,6 +95,10 @@ private:
   std::vector<VkFramebuffer> m_swapchain_framebuffers;
   VkCommandPool m_command_pool;
   std::vector<VkCommandBuffer> m_command_buffers;
+  VkVertexInputBindingDescription m_vertex_desc;
+  VkVertexInputBindingDescription m_vertex_uv_desc;
+  VkVertexInputAttributeDescription m_vertex_input_desc;
+  VkVertexInputAttributeDescription m_vertex_uv_input_desc;
 
   std::unique_ptr<VulkanShader> m_vert_shader;
   std::unique_ptr<VulkanShader> m_frag_shader;

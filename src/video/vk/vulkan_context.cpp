@@ -53,6 +53,10 @@ VulkanContext::VulkanContext(VulkanVideoSystem& video_system) :
   m_swapchain_framebuffers(),
   m_command_pool(VK_NULL_HANDLE),
   m_command_buffers(),
+  m_vertex_desc(),
+  m_vertex_uv_desc(),
+  m_vertex_input_desc(),
+  m_vertex_uv_input_desc(),
   m_vert_shader(),
   m_frag_shader()
 {
@@ -325,12 +329,35 @@ VulkanContext::create_pipeline()
   frag_create_info.module = m_frag_shader->get_handle();
   frag_create_info.pName = "main";
 
+  m_vertex_desc.binding = 0;
+  m_vertex_desc.stride = 2 * sizeof(float);
+  m_vertex_desc.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+  m_vertex_uv_desc.binding = 1;
+  m_vertex_uv_desc.stride = 2 * sizeof(float);
+  m_vertex_uv_desc.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+  m_vertex_input_desc.binding = 0;
+  m_vertex_input_desc.location = 0;
+  m_vertex_input_desc.format = VK_FORMAT_R32G32_SFLOAT;
+  m_vertex_input_desc.offset = 0;
+
+  m_vertex_uv_input_desc.binding = 1;
+  m_vertex_uv_input_desc.location = 1;
+  m_vertex_uv_input_desc.format = VK_FORMAT_R32G32_SFLOAT;
+  m_vertex_uv_input_desc.offset = 0;
+
+  VkVertexInputAttributeDescription input_desc[] = { m_vertex_input_desc, m_vertex_uv_input_desc };
+  VkVertexInputBindingDescription desc[] = { m_vertex_desc, m_vertex_uv_desc };
+
   VkPipelineShaderStageCreateInfo stages[] = { vert_create_info, frag_create_info };
 
   VkPipelineVertexInputStateCreateInfo input_create_info{};
   input_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-  input_create_info.vertexBindingDescriptionCount = 0;
-  input_create_info.vertexAttributeDescriptionCount = 0;
+  input_create_info.vertexBindingDescriptionCount = 2;
+  input_create_info.vertexAttributeDescriptionCount = 2;
+  input_create_info.pVertexBindingDescriptions = desc;
+  input_create_info.pVertexAttributeDescriptions = input_desc;
 
   VkPipelineInputAssemblyStateCreateInfo assembly_create_info{};
   assembly_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
