@@ -17,6 +17,7 @@
 #include "video/vk/vulkan_painter.hpp"
 
 #include "video/vk/vulkan_video_system.hpp"
+#include "video/vk/vulkan_texture.hpp"
 #include "video/drawing_request.hpp"
 
 VulkanPainter::VulkanPainter(VulkanVideoSystem& video_system) :
@@ -41,6 +42,11 @@ VulkanPainter::~VulkanPainter()
 void
 VulkanPainter::draw_texture(const TextureRequest& request)
 {
+  const VulkanTexture& texture = static_cast<const VulkanTexture&>(request.texture);
+
+  assert(request.srcrects.size() == request.dstrects.size());
+  assert(request.srcrects.size() == request.angles.size());
+
   
 }
 
