@@ -53,6 +53,7 @@ Config::Config() :
 #endif
   video(VideoSystem::VIDEO_AUTO),
   try_vsync(true),
+  video_system_config(),
   show_fps(false),
   show_player_pos(false),
   show_controller(false),
@@ -73,7 +74,6 @@ Config::Config() :
   addons(),
   developer_mode(false),
   christmas_mode(false),
-  crisp_graphics(true),
   transitions_enabled(true),
   confirmation_dialog(false),
   pause_on_focusloss(true),
@@ -168,7 +168,6 @@ Config::load()
   config_mapping.get("show_player_pos", show_player_pos);
   config_mapping.get("show_controller", show_controller);
   config_mapping.get("developer", developer_mode);
-  config_mapping.get("crisp_graphics", crisp_graphics);
   config_mapping.get("confirmation_dialog", confirmation_dialog);
   config_mapping.get("pause_on_focusloss", pause_on_focusloss);
   config_mapping.get("custom_mouse_cursor", custom_mouse_cursor);
@@ -284,6 +283,18 @@ Config::load()
     config_video_mapping->get("video", video_string);
     video = VideoSystem::get_video_system(video_string);
     config_video_mapping->get("vsync", try_vsync);
+
+    std::optional<ReaderCollection> video_system_config_collection;
+    if (config_video_mapping->get("videosystemconfig", video_system_config_collection))
+    {
+      const std::vector<ReaderObject> objs = video_system_config_collection->get_objects();
+      for (size_t i = 0; i < objs.size(); i++)
+      {
+        const ReaderMapping mapping = objs[i].get_mapping();
+        VideoSystemConfig& video_config = video_system_config[VideoSystem::get_video_system(objs[i].get_name())];
+        mapping.get("crispgraphics", video_config.crisp_graphics);
+      }
+    }
 
     config_video_mapping->get("fullscreen_width",  fullscreen_size.width);
     config_video_mapping->get("fullscreen_height", fullscreen_size.height);
@@ -419,7 +430,6 @@ Config::save()
   if (is_christmas()) {
     writer.write("christmas", christmas_mode);
   }
-  writer.write("crisp_graphics", crisp_graphics);
   writer.write("transitions_enabled", transitions_enabled);
   writer.write("locale", locale);
   writer.write("repository_url", repository_url);
@@ -450,6 +460,16 @@ Config::save()
     writer.write("video", VideoSystem::get_video_string(video));
   }
   writer.write("vsync", try_vsync);
+
+  writer.start_list("videosystemconfig");
+  for (const auto& [key, value] : video_system_config)
+  {
+    const std::string video_string = VideoSystem::get_video_string(key);
+    writer.start_list(video_string);
+    writer.write("crispgraphics", value.crisp_graphics);
+    writer.end_list(video_string);
+  }
+  writer.end_list("videosystemconfig");
 
   writer.write("fullscreen_width",  fullscreen_size.width);
   writer.write("fullscreen_height", fullscreen_size.height);

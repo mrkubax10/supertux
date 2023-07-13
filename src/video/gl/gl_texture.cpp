@@ -201,10 +201,9 @@ GLTexture::set_texture_params()
 {
   assert_gl();
 
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-    g_config->crisp_graphics ? static_cast<GLint>(GL_NEAREST) : static_cast<GLint>(m_sampler.get_filter()));
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-    g_config->crisp_graphics ? static_cast<GLint>(GL_NEAREST) : static_cast<GLint>(m_sampler.get_filter()));
+  const GLint filter = g_config->video_system_config[g_config->video].crisp_graphics ? static_cast<GLint>(GL_NEAREST) : static_cast<GLint>(m_sampler.get_filter());
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLint>(m_sampler.get_wrap_s()));
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLint>(m_sampler.get_wrap_t()));

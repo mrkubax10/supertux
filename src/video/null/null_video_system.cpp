@@ -38,6 +38,12 @@ NullVideoSystem::~NullVideoSystem()
 {
 }
 
+VideoSystemCapabilities
+NullVideoSystem::get_capabilities() const
+{
+  return { /* crisp_graphics */ false };
+}
+
 Renderer*
 NullVideoSystem::get_back_renderer() const
 {

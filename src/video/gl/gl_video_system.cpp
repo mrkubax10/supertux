@@ -129,6 +129,12 @@ GLVideoSystem::get_name() const
   return out.str();
 }
 
+VideoSystemCapabilities
+GLVideoSystem::get_capabilities() const
+{
+  return { /* crisp_graphics */ true };
+}
+
 void
 GLVideoSystem::create_gl_window()
 {

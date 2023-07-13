@@ -61,6 +61,12 @@ SDLVideoSystem::get_name() const
   return out.str();
 }
 
+VideoSystemCapabilities
+SDLVideoSystem::get_capabilities() const
+{
+  return { /* crisp_graphics */ false };
+}
+
 void
 SDLVideoSystem::create_window()
 {

@@ -34,6 +34,12 @@ class Surface;
 class SurfaceData;
 class Viewport;
 
+/** capabilities supported by certain VideoSystem */
+struct VideoSystemCapabilities
+{
+  bool crisp_graphics;
+};
+
 class VideoSystem : public Currenton<VideoSystem>
 {
 public:
@@ -57,6 +63,7 @@ public:
 
   /** Return a human readable name of the current video system */
   virtual std::string get_name() const = 0;
+  virtual VideoSystemCapabilities get_capabilities() const = 0;
 
   virtual Renderer* get_back_renderer() const = 0;
   virtual Renderer& get_renderer() const = 0;

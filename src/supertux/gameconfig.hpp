@@ -29,6 +29,11 @@
 class Config final
 {
 public:
+  struct VideoSystemConfig
+  {
+    bool crisp_graphics;
+  };
+public:
   Config();
 
   void load();
@@ -68,6 +73,7 @@ public:
   bool use_fullscreen;
   VideoSystem::Enum video;
   bool try_vsync;
+  std::map<VideoSystem::Enum, VideoSystemConfig> video_system_config;
   bool show_fps;
   bool show_player_pos;
   bool show_controller;
@@ -106,7 +112,6 @@ public:
 
   bool developer_mode;
   bool christmas_mode;
-  bool crisp_graphics;
   bool transitions_enabled;
   bool confirmation_dialog;
   bool pause_on_focusloss;

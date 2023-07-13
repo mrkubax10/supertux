@@ -22,6 +22,7 @@
 #include "gui/menu_item.hpp"
 #include "supertux/globals.hpp"
 #include "supertux/gameconfig.hpp"
+#include "supertux/menu/options_menu.hpp"
 #include "util/gettext.hpp"
 #include "video/video_system.hpp"
 

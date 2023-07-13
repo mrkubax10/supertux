@@ -40,6 +40,8 @@
 #include <emscripten/html5.h>
 #endif
 
+#include <fmt/format.h>
+
 bool
 OptionsMenu::less_than_volume(const std::string& lhs, const std::string& rhs)
 {
@@ -114,6 +116,13 @@ OptionsMenu::OptionsMenu(Type type, bool complete) :
 
       add_submenu(_("Change Video System"), MenuStorage::MenuId::VIDEO_SYSTEM_MENU)
         .set_help(_("Change video system used to render graphics"));
+
+      if (VideoSystem::current()->get_capabilities().crisp_graphics)
+      {
+        add_hl();
+        add_inactive(fmt::format(_("Settings of video system: {}"), VideoSystem::get_video_string(g_config->video)));
+        add_toggle(MNID_CRISP_GRAPHICS, _("Crisp graphics"), &g_config->video_system_config[g_config->video].crisp_graphics);
+      }
 
       break;
     }

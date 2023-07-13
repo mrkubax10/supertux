@@ -35,6 +35,7 @@ public:
   ~SDLVideoSystem() override;
 
   virtual std::string get_name() const override;
+  virtual VideoSystemCapabilities get_capabilities() const override;
 
   virtual Renderer* get_back_renderer() const override { return nullptr; }
   virtual Renderer& get_renderer() const override;
