@@ -52,6 +52,7 @@ Config::Config() :
   use_fullscreen(false),
 #endif
   video(VideoSystem::VIDEO_AUTO),
+  pending_video(VideoSystem::VIDEO_AUTO),
   try_vsync(true),
   video_system_config(),
   show_fps(false),
@@ -281,7 +282,7 @@ Config::load()
     config_video_mapping->get("fullscreen", use_fullscreen);
     std::string video_string;
     config_video_mapping->get("video", video_string);
-    video = VideoSystem::get_video_system(video_string);
+    video = pending_video = VideoSystem::get_video_system(video_string);
     config_video_mapping->get("vsync", try_vsync);
 
     std::optional<ReaderCollection> video_system_config_collection;
@@ -457,7 +458,7 @@ Config::save()
     // don't save NULL renderer to config as starting SuperTux without
     // getting a window is rather confusing
   } else {
-    writer.write("video", VideoSystem::get_video_string(video));
+    writer.write("video", VideoSystem::get_video_string(pending_video));
   }
   writer.write("vsync", try_vsync);
 

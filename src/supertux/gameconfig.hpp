@@ -72,6 +72,7 @@ public:
 
   bool use_fullscreen;
   VideoSystem::Enum video;
+  VideoSystem::Enum pending_video;
   bool try_vsync;
   std::map<VideoSystem::Enum, VideoSystemConfig> video_system_config;
   bool show_fps;

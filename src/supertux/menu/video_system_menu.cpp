@@ -51,7 +51,7 @@ VideoSystemMenu::menu_action(MenuItem& item)
 {
   if (item.get_id() >= 0)
   {
-    g_config->video = VideoSystem::get_video_system(item.get_text());
+    g_config->pending_video = VideoSystem::get_video_system(item.get_text());
     Dialog::show_message(_("Restart game for the changes to take effect"), false, false, []
       {
         MenuManager::instance().pop_menu();
